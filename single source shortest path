@@ -1,0 +1,91 @@
+//compare the performance of siongle source shortest path using greedy method when the graph is represented by adjacency list. 
+import java.util.*;
+
+public class SSSP {
+    static final int INF = 9999;
+
+    // Function to find the vertex with the minimum distance value
+    static int minDistance(int[] dist, boolean[] visited, int n) {
+        int min = INF, minIndex = -1;
+        for (int v = 0; v < n; v++) {
+            if (!visited[v] && dist[v] < min) {
+                min = dist[v];
+                minIndex = v;
+            }
+        }
+        return minIndex;
+    }
+
+    // Function for finding the shortest path using Dijkstra's algorithm
+    static void ss(ArrayList<ArrayList<int[]>> adjList, int v, int n) {
+        int[] dist = new int[n];  // To store the shortest distance from the source
+        boolean[] visited = new boolean[n];  // To keep track of visited vertices
+
+        // Initialize distances to INF and visited to false
+        for (int i = 0; i < n; i++) {
+            dist[i] = INF;
+            visited[i] = false;
+        }
+        dist[v] = 0;  // Distance to the source is 0
+
+        for (int count = 0; count < n - 1; count++) {
+            // Pick the minimum distance vertex from the set of unvisited vertices
+            int u = minDistance(dist, visited, n);
+            visited[u] = true;  // Mark the picked vertex as visited
+
+            // Update the distance value of the adjacent vertices of the picked vertex
+            for (int[] neighbor : adjList.get(u)) {
+                int w = neighbor[0];  // Neighbor vertex
+                int weight = neighbor[1];  // Weight of the edge to the neighbor
+
+                // Update dist[w] if the current path is shorter than the previous path
+                if (!visited[w] && dist[u] != INF && dist[u] + weight < dist[w]) {
+                    dist[w] = dist[u] + weight;
+                }
+            }
+        }
+
+        // Print the shortest distances
+        System.out.println("Vertex \t Distance from Source " + v);
+        for (int i = 0; i < n; i++) {
+            System.out.println(i + "\t" + (dist[i] == INF ? "INF" : dist[i]));
+        }
+    }
+
+    // Main method to take input and execute the algorithm
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        // Input number of vertices
+        System.out.print("Enter number of vertices: ");
+        int n = sc.nextInt();
+
+        // Create adjacency list representation
+        ArrayList<ArrayList<int[]>> adjList = new ArrayList<>();
+
+        // Initialize adjacency list
+        for (int i = 0; i < n; i++) {
+            adjList.add(new ArrayList<int[]>());
+        }
+
+        // Input edges
+        System.out.println("Enter the cost adjacency list (use '9999' for INF): ");
+        for (int i = 0; i < n; i++) {
+            System.out.print("Enter the edges for vertex " + i + " (format: neighbor vertex weight) ");
+            System.out.println("Enter -1 to stop adding edges for this vertex.");
+            while (true) {
+                int neighbor = sc.nextInt();
+                if (neighbor == -1) break;
+                int weight = sc.nextInt();
+                adjList.get(i).add(new int[] { neighbor, weight });
+            }
+        }
+
+        // Input source vertex (0-indexed)
+        System.out.print("Enter source vertex: ");
+        int v = sc.nextInt();
+
+        // Call Dijkstra's algorithm to find the shortest path
+        ss(adjList, v, n);
+    }
+}

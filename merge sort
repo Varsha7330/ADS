@@ -1,5 +1,5 @@
 # ADS
-#finding BFT and DFT using linkedlist
+#merge sort
 import java.util.*;
 public class Main{
     public static void merge(int a[],int low,int high, int mid) {
